@@ -1,26 +1,46 @@
 <template>
-    <div>
-      <h1>Main Page</h1>
-      <button @click="showCreateTaskDialog = true">Create Task</button>
-      <input v-model="searchQuery" placeholder="Search tasks" />
-      <div>
-        <label>
-          <input type="radio" value="all" v-model="selectedCategory" /> All
-        </label>
-        <label v-for="category in categories" :key="category.id">
-          <input type="radio" :value="category.name" v-model="selectedCategory" /> {{ category.name }}
-        </label>
-      </div>
-      <KanbanBoard :tasks="filteredTasks" />
-      <TaskDialog v-if="showCreateTaskDialog" @close="showCreateTaskDialog = false" @save="fetchTasks" />
-    </div>
+    <v-app>
+    <v-main>
+      <v-container>
+        <v-row>
+          <v-col cols="12">
+            <v-card class="pa-4">
+              <v-toolbar flat>
+                <v-toolbar-title>Main Page</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" @click="showCreateTaskDialog = true">Create Task</v-btn>
+              </v-toolbar>
+              <v-text-field
+                v-model="searchQuery"
+                label="Search tasks"
+                class="mt-4"
+              ></v-text-field>
+              <v-radio-group v-model="selectedCategory" class="mt-4">
+                <v-radio label="All" value="all"></v-radio>
+                <v-radio
+                  v-for="category in categories"
+                  :key="category.id"
+                  :label="category.name"
+                  :value="category.name"
+                ></v-radio>
+              </v-radio-group>
+              <KanbanBoard :tasks="tasks" class="mt-4" />
+              <TaskDialog v-if="showCreateTaskDialog" @close="showCreateTaskDialog = false" @save="fetchTasks" />
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
+  </v-app>
   </template>
   
   <script lang="ts" setup>
-  import { ref, computed, onMounted } from 'vue';
+  import { ref, onMounted } from 'vue';
   import KanbanBoard from '../components/KanbanBoard.vue';
   import TaskDialog from '../components/TaskDialog.vue';
   import api from '../services/api';
+  import { Task, Category } from '../types';
+  import { mapResponseToTask, mapResponseToCategory } from '../services/mapping';
 
   const searchQuery = ref('');
   const selectedCategory = ref('all');
@@ -28,77 +48,28 @@
   const categories = ref<Category[]>([]);
   const showCreateTaskDialog = ref(false);
 
-  interface Task {
-    id: number;
-    assigned_to: string[];
-    author: {
-      id: number,
-      first_name: string,
-      last_name: string,
-      username: string,
-      email: string
-    }
-    status: string;
-    due_date: number;
-    urgency: string;
-    title: string;
-    description: string;
-    category: {
-      id: number;
-      name: string;
-    };
-  }
-
-  interface Category {
-    id: string;
-    name: string;
-  }
   
+  onMounted(() => {
+    fetchTasks();
+    fetchCategories();
+  });
   
   const fetchTasks = async () => {
     const response = await api.get('/todos/');
     tasks.value = response.data.map(mapResponseToTask);
-    console.log('fetchTasks: ', tasks.value);
   };
   
   const fetchCategories = async () => {
     const response = await api.get('/categories/');
     categories.value = response.data.map(mapResponseToCategory);
   };
-
-  const mapResponseToTask = (response: Task): Task => {
-    return {
-      id: response.id,
-      assigned_to: response.assigned_to,
-      author: response.author,
-      status: response.status,
-      due_date: response.due_date,
-      urgency: response.urgency,
-      title: response.title,
-      description: response.description,
-      category: response.category,
-    };
-  };
-
-  const mapResponseToCategory = (response: Category): Category => {
-    return {
-      id: response.id,
-      name: response.name,
-    };
-  };
   
-  
-  const filteredTasks = computed(() => {
-    return tasks.value.filter(task => {
-      const matchesCategory = selectedCategory.value === 'all' || task.category.name === selectedCategory.value;
-      const matchesSearch = task.title.includes(searchQuery.value) || task.description.includes(searchQuery.value);
-      return matchesCategory && matchesSearch;
-    });
-  });
-  
-  onMounted(() => {
-    fetchTasks();
-    fetchCategories();
-  });
   </script>
+
+<style scoped>
+  .v-card {
+    max-width: 800px;
+    margin: auto;
+  }
+</style>
   
