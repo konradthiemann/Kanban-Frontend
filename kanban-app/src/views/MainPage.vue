@@ -35,7 +35,7 @@
   </template>
   
   <script lang="ts" setup>
-  import { ref, onMounted } from 'vue';
+  import { ref, onBeforeMount } from 'vue';
   import KanbanBoard from '../components/KanbanBoard.vue';
   import TaskDialog from '../components/TaskDialog.vue';
   import api from '../services/api';
@@ -49,7 +49,7 @@
   const showCreateTaskDialog = ref(false);
 
   
-  onMounted(() => {
+  onBeforeMount(() => {
     fetchTasks();
     fetchCategories();
   });

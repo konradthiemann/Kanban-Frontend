@@ -1,3 +1,8 @@
+export enum Urgency {
+  high = 'high',
+  medium = 'medium',
+  low = 'low',
+}
 export interface Task {
     id: number;
     assigned_to: string[];
@@ -10,7 +15,7 @@ export interface Task {
     }
     status: string;
     due_date: number;
-    urgency: string;
+    urgency: Urgency;
     title: string;
     description: string;
     category: {

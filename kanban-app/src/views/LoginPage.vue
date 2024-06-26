@@ -21,8 +21,6 @@
   const password = ref('');
   
   const handleSubmit = async () => {
-    // console.log("username: ", username.value);
-    // console.log("password: ", password.value);
     await login(username.value, password.value);
     router.push('/main');
   };
