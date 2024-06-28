@@ -47,6 +47,7 @@
 import { PropType, computed } from 'vue';
 import type { Task } from '../types';
 import { Urgency } from '../types';
+import { updateTask } from '../services/api';
 
   
 const props = defineProps({
@@ -75,9 +76,12 @@ const onDrop = (event: DragEvent, status: string) => {
   const taskID = event.dataTransfer.getData('taskID');
   const task = props.tasks.find((task) => task.id == +taskID);
   task ? task.status = status : 'todo';
+  if (task) {
+    updateTask(+taskID, 'status', task?.status);
+  }
 };
 
-const sortedTasksByStatus = computed(() =>  props.tasks.sort((a, b) => {
+const sortedTasksByStatus = computed(() => props.tasks.sort((a, b) => {
     return Object.values(Urgency).indexOf(a.urgency) - Object.values(Urgency).indexOf(b.urgency)
   })
 );

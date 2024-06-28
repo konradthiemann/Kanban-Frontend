@@ -38,9 +38,8 @@
   import { ref, onBeforeMount } from 'vue';
   import KanbanBoard from '../components/KanbanBoard.vue';
   import TaskDialog from '../components/TaskDialog.vue';
-  import api from '../services/api';
+  import { fetchTasks, fetchCategories } from '../services/api';
   import { Task, Category } from '../types';
-  import { mapResponseToTask, mapResponseToCategory } from '../services/mapping';
 
   const searchQuery = ref('');
   const selectedCategory = ref('all');
@@ -49,20 +48,12 @@
   const showCreateTaskDialog = ref(false);
 
   
-  onBeforeMount(() => {
-    fetchTasks();
-    fetchCategories();
+  onBeforeMount(async () => {
+    tasks.value = await fetchTasks();
+    categories.value = await fetchCategories();
   });
   
-  const fetchTasks = async () => {
-    const response = await api.get('/todos/');
-    tasks.value = response.data.map(mapResponseToTask);
-  };
-  
-  const fetchCategories = async () => {
-    const response = await api.get('/categories/');
-    categories.value = response.data.map(mapResponseToCategory);
-  };
+ 
   
   </script>
 
