@@ -21,8 +21,14 @@
   const password = ref('');
   
   const handleSubmit = async () => {
-    await login(username.value, password.value);
-    router.push('/main');
+    try {
+      const loginSuccess =  await login(username.value, password.value);
+      if (loginSuccess) {
+        router.push('/main');
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
   </script>
   

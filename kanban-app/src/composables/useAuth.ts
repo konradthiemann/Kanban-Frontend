@@ -1,22 +1,31 @@
 import { ref } from 'vue';
-import api from '../services/api';
+import api, { getUserID, getUser } from '../services/api';
 
 export function useAuth() {
   const user = ref(null);
 
-  const login = async (username: string, password: string) => {
+  const login = async (username: string, password: string):Promise<boolean> => {
     try {
       const response = await api.post('/api/token/', {
         "username":username,
         "password":password
       });
-      console.log(response.data);
-      user.value = response.data.user;
+
       localStorage.setItem('access', response.data.access);
       localStorage.setItem('refresh', response.data.refresh);
-      return response.data;
-    } catch (error) {
-      console.error(error);
+      api.defaults.headers['Authorization'] = `Bearer ${response.data.access}`;
+      
+      const userId = await getUserID(response.data.access);
+      user.value = await getUser(userId);
+      
+      return true
+    } catch (error:any) {
+      if (error.response && error.response.status === 401) {
+        console.log('Invalid username or password');
+    } else {
+        console.error('An error occurred during login:', error);
+    }
+      return false;
     }
   };
 

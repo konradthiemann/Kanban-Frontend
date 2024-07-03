@@ -8,24 +8,40 @@
               <v-toolbar flat>
                 <v-toolbar-title>Main Page</v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="showCreateTaskDialog = true">Create Task</v-btn>
+                <v-btn
+                  color="primary"
+                  @click="showCreateTaskDialog = true"
+                  >
+                  Create Task
+                </v-btn>
               </v-toolbar>
               <v-text-field
                 v-model="searchQuery"
                 label="Search tasks"
                 class="mt-4"
               ></v-text-field>
-              <v-radio-group v-model="selectedCategory" class="mt-4">
-                <v-radio label="All" value="all"></v-radio>
-                <v-radio
-                  v-for="category in categories"
-                  :key="category.id"
-                  :label="category.name"
-                  :value="category.name"
-                ></v-radio>
-              </v-radio-group>
-              <KanbanBoard :tasks="tasks" class="mt-4" />
-              <TaskDialog v-if="showCreateTaskDialog" @close="showCreateTaskDialog = false" @save="fetchTasks" />
+              <v-select
+                v-model="selectedCategories"
+                :items="categories.map((category) => category.name)"
+                chips
+                multiple
+                hint="Select one or more categories"
+                label="Category"
+                class="mt-4"
+              />
+              <KanbanBoard
+                :tasks="tasks"
+                class="mt-4"
+              />
+              <v-overlay
+                v-model="showCreateTaskDialog"
+                style="display: flex; align-items: center; justify-content: center;"
+              >
+                <TaskDialog
+                  @close="showCreateTaskDialog = false"
+                  @save="fetchTasks"
+                />
+              </v-overlay>
             </v-card>
           </v-col>
         </v-row>
@@ -40,21 +56,18 @@
   import TaskDialog from '../components/TaskDialog.vue';
   import { fetchTasks, fetchCategories } from '../services/api';
   import { Task, Category } from '../types';
-
+  
   const searchQuery = ref('');
-  const selectedCategory = ref('all');
+  const selectedCategories = ref<string[]>([]);
   const tasks = ref<Task[]>([]);
   const categories = ref<Category[]>([]);
   const showCreateTaskDialog = ref(false);
-
+  
   
   onBeforeMount(async () => {
     tasks.value = await fetchTasks();
     categories.value = await fetchCategories();
   });
-  
- 
-  
   </script>
 
 <style scoped>

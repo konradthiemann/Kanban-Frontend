@@ -10,15 +10,11 @@
           @dragover.prevent
           @dragenter.prevent
       >
-        <v-card
-          theme="dark"
-        >
+        <v-card>
           <v-card-title>{{ status }}</v-card-title>
           <v-divider />
           <v-card-text>
-            <v-list
-              theme="dark"
-            >
+            <v-list>
               <template 
                 v-for="element in sortedTasksByStatus"
               >
@@ -26,7 +22,6 @@
                   v-if="element.status === status"
                   class="drag-el"
                   rounded
-                  theme="dark"
                   :title=element.title
                   :key="element.id"
                   draggable="true"
@@ -100,12 +95,12 @@ const sortedTasksByStatus = computed(() => props.tasks.sort((a, b) => {
 
 .drag-el {
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: 0.2s;
   border: solid 1px #e0e0e0;
 }
 
 .drag-el:hover {
-  background-color: hsl(0, 0%, 26%);
+  background-color: hsl(0, 0%, 46%);
 }
   </style>
   

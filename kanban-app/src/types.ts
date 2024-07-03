@@ -29,3 +29,11 @@ export interface Task {
     id: string;
     name: string;
   }
+
+  export interface DecodedToken {
+    exp: number; // expiration time
+    iat: number; // issued at
+    jti: string; // JWT ID
+    token_type: string; // token type
+    user_id: number; // user ID
+  }
