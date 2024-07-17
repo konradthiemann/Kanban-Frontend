@@ -2,7 +2,7 @@ import { ref } from 'vue';
 import api, { getUserID, getUser } from '../services/api';
 
 export function useAuth() {
-  const user = ref(null);
+  const user = ref();
 
   const login = async (username: string, password: string):Promise<boolean> => {
     try {

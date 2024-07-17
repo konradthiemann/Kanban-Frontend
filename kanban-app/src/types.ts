@@ -18,15 +18,12 @@ export interface Task {
     urgency: Urgency;
     title: string;
     description: string;
-    category: {
-      id: number;
-      name: string;
-    };
+    category: number;
   }
 
 
   export interface Category {
-    id: string;
+    id: number;
     name: string;
   }
 
@@ -36,4 +33,12 @@ export interface Task {
     jti: string; // JWT ID
     token_type: string; // token type
     user_id: number; // user ID
+  }
+
+  export interface User {
+    id: number;
+    first_name: string;
+    last_name: string;
+    username: string;
+    email: string;
   }

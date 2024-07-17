@@ -27,8 +27,8 @@
                   draggable="true"
                   @dragstart="startDrag($event, element)"
                 >
-                  <div>{{ element.id }}</div>
-                  <div>{{ element.urgency }}</div>
+                  {{ element.category }}
+                  <!-- <div>{{ element.urgency }}</div> -->
                 </v-list-item>
               </template>
             </v-list>
@@ -42,16 +42,16 @@
 import { PropType, computed } from 'vue';
 import type { Task } from '../types';
 import { Urgency } from '../types';
-import { updateTask } from '../services/api';
-
+import { updateField } from '../services/api';
   
 const props = defineProps({
   tasks: {
     type: Array as PropType<Task[]>,
     required: true,
   },
-});
   
+});
+
 const statuses = ['todo', 'in_progress', 'review', 'done'];
 
 const startDrag = (event: DragEvent, task:Task) => {
@@ -61,7 +61,6 @@ const startDrag = (event: DragEvent, task:Task) => {
   event.dataTransfer.dropEffect = 'move';
   event.dataTransfer.effectAllowed = 'move';
   event.dataTransfer.setData('taskID', task.id.toString());
-  console.log(task);
 };
 
 const onDrop = (event: DragEvent, status: string) => {
@@ -72,11 +71,11 @@ const onDrop = (event: DragEvent, status: string) => {
   const task = props.tasks.find((task) => task.id == +taskID);
   task ? task.status = status : 'todo';
   if (task) {
-    updateTask(+taskID, 'status', task?.status);
+    updateField(+taskID, 'status', task?.status);
   }
 };
 
-const sortedTasksByStatus = computed(() => props.tasks.sort((a, b) => {
+const sortedTasksByStatus = computed(() => props.tasks?.sort((a, b) => {
     return Object.values(Urgency).indexOf(a.urgency) - Object.values(Urgency).indexOf(b.urgency)
   })
 );

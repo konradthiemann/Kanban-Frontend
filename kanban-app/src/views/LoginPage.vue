@@ -2,8 +2,8 @@
     <div>
       <h1>Login</h1>
       <form @submit.prevent="handleSubmit">
-        <input v-model="username" placeholder="Username" />
-        <input v-model="password" type="password" placeholder="Password" />
+        <input v-model="username" placeholder="Username" autocomplete="username"/>
+        <input v-model="password" type="password" placeholder="Password" autocomplete="current-password" />
         <button type="submit">Login</button>
       </form>
       <router-link to="/register">Create a new account</router-link>
