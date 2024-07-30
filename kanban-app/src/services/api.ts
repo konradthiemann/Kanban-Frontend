@@ -17,7 +17,10 @@ export const getAllUsers = async ():Promise<User[]> => {
 
 export const getUser = async (id:number):Promise<User> => {
   const response = await api.get(`/users/?id=${id}`);
-  return response.data;
+  if (response.data.length === 0) {
+    throw new Error('User not found');
+  } 
+  return response.data[0];
 }
 
 export const getUserID = async (token:string):Promise<number> => {
@@ -62,7 +65,6 @@ export const searchTasks = async (search:string):Promise<Task[]> => {
 
 export const fetchCategories = async ():Promise<Category[]>  => {
   const response = await api.get('/categories/');
-  console.log(response.data);
   return response.data.map(mapResponseToCategory);
 };
 

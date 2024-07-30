@@ -4,17 +4,18 @@
         v-bind="task"
     >
         <VCard>
-            <VCardTitle>
+            <VCardTitle
+                style="text-align: center;"
+            >
                 <span class="headline">
                     {{ task?.title }}
-                    typeof: {{ typeof task }}
                 </span>
             </VCardTitle>
             <VCardText>
                 <p>author: {{ task?.author.username }}</p>
-                <p>{{ task?.description }}</p>
-                <p>Assigned to: {{ task?.assigned_to }}</p>
-                <p>Due Date: {{ task?.due_date }}</p>
+                <p>description: {{ task?.description }}</p>
+                <p>Due Date: {{ new Date(Number(task?.due_date)).toLocaleDateString() }}</p>
+                    Assigned to:  <p v-for="element in assignedTo">{{ '&emsp;' + element.username }}</p>
                 <p>Urgency: {{ task?.urgency }}</p>
                 <p>Status: {{ task?.status }}</p>
             </VCardText>
@@ -26,16 +27,11 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue';
-import { Task } from '../types';
+import { defineProps, watch, ref } from 'vue';
+import { Task, User } from '../types';
+import { getUser } from '../services/api';
 
-// const props = defineProps({
-//     task: {
-//         type: Object as () => Task | undefined,
-//         required: true
-//     }
-// })
-defineProps({
+const props = defineProps({
     task: {
         type: Object as () => Task | undefined,
         required: true
@@ -49,4 +45,28 @@ const emit = defineEmits<{
 const close = () => {
     emit('close');
 }
+
+const assignedTo = ref<User[]>([]);
+
+watch(() => props.task?.assigned_to, (newAssignedTo) => {
+    if (!newAssignedTo) {
+        return;
+    }
+    assignedTo.value = [];
+    for (let i = 0; i < newAssignedTo.length; i++) {
+        const element = newAssignedTo[i];
+        getUser(+element).then((res) => {
+            assignedTo.value.push(res);
+        });
+    }
+});
+
+
 </script>
+
+<style scoped>
+.headline {
+    font-size: 24px;
+    font-weight: bold;
+}
+</style>
