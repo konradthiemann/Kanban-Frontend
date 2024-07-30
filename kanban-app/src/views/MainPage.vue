@@ -49,13 +49,14 @@
               <KanbanBoard
                 :tasks="taskByCategory"
                 v-model="selectedCategories"
-                class="mt-4"
               />
-              <TaskDialog
-                v-model="showCreateTaskDialog"
-                @close="showCreateTaskDialog = false"
-                @save="updateTasks"
-              />
+              <Teleport to="body">
+                <TaskDialog
+                  v-model="showCreateTaskDialog"
+                  @close="showCreateTaskDialog = false"
+                  @save="updateTasks"
+                />
+            </Teleport>
             </v-card>
           </v-col>
         </v-row>

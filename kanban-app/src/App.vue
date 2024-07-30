@@ -1,11 +1,8 @@
 <script setup lang="ts">
-// import HelloWorld from './components/HelloWorld.vue'
 import { RouterView } from 'vue-router';
-// import KanbanBoard from './components/KanbanBoard.vue';
 </script>
 
 <template>
-  
   <RouterView />
 </template>
 

@@ -117,7 +117,7 @@ import { Category, User } from '../types';
 import { dateToUnixTimestamp } from '../services/mapping';
 
 const props = defineProps({
-  task: Object,
+  // task: Object,
   dialog: Boolean
 });
 

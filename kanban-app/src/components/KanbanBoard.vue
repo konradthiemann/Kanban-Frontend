@@ -1,6 +1,6 @@
 <template>
-    <v-row class="kanban-board">
-        <v-col
+    <VRow class="kanban-board">
+        <VCol
           v-for="status in statuses"
           :key="status"
           cols="12"
@@ -10,7 +10,7 @@
           @dragover.prevent
           @dragenter.prevent
       >
-        <v-card>
+        <VCard>
           <v-card-title>{{ status }}</v-card-title>
           <v-divider />
           <v-card-text>
@@ -26,6 +26,7 @@
                   :key="element.id"
                   draggable="true"
                   @dragstart="startDrag($event, element)"
+                  @click="showDetailDialog(element)"
                 >
                   {{ element.category }}
                   <!-- <div>{{ element.urgency }}</div> -->
@@ -33,26 +34,39 @@
               </template>
             </v-list>
           </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+        </VCard>
+      </VCol>
+    </VRow>
+    <teleport to="body">
+      <DetailDialog
+        v-model="openDetailDialog"
+        @close="openDetailDialog = false"
+        :task="DetailDialogTaskData"
+      />
+  </teleport>
   </template>
   
 <script lang="ts" setup>
-import { PropType, computed } from 'vue';
-import type { Task } from '../types';
-import { Urgency } from '../types';
-import { updateField } from '../services/api';
+import { PropType, computed, ref } from 'vue'
+import type { Task } from '../types'
+import { Urgency } from '../types'
+import { updateField } from '../services/api'
+import DetailDialog from './DetailDialog.vue'
   
 const props = defineProps({
   tasks: {
     type: Array as PropType<Task[]>,
     required: true,
   },
-  
+  modelValue: {
+    type: Array as PropType<{id:number, name:string}[]>,
+    required: true,
+  }, 
 });
 
-const statuses = ['todo', 'in_progress', 'review', 'done'];
+const statuses = ['todo', 'in_progress', 'review', 'done']
+const openDetailDialog = ref(false)
+const DetailDialogTaskData = ref<Task>({} as Task)
 
 const startDrag = (event: DragEvent, task:Task) => {
   if (!event || event.dataTransfer === null){
@@ -78,7 +92,13 @@ const onDrop = (event: DragEvent, status: string) => {
 const sortedTasksByStatus = computed(() => props.tasks?.sort((a, b) => {
     return Object.values(Urgency).indexOf(a.urgency) - Object.values(Urgency).indexOf(b.urgency)
   })
-);
+)
+
+const showDetailDialog = (task: Task) => {
+  DetailDialogTaskData.value = task
+  console.log("DetailDialogTaskData: ", DetailDialogTaskData)
+  openDetailDialog.value = true
+}
 </script>
   
 <style scoped>
