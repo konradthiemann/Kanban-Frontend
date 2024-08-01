@@ -20,7 +20,18 @@
                 <p>Status: {{ task?.status }}</p>
             </VCardText>
             <VCardActions>
-                <VBtn color="primary" @click="close">Close</VBtn>
+                <VBtn 
+                    color="secondary"
+                    @click="edit(task ? task : {} as Task)"
+                >
+                Edit
+                </VBtn>
+                <VBtn
+                    color="primary"
+                    @click="close"
+                >
+                Close
+                </VBtn>
             </VCardActions>
         </VCard> 
     </VDialog>
@@ -40,10 +51,15 @@ const props = defineProps({
 
 const emit = defineEmits<{
   (e: 'close'): void
+  (e: 'edit', task:Task): void
 }>()
 
 const close = () => {
     emit('close');
+}
+
+const edit = (task:Task) => {
+    emit('edit', task);
 }
 
 const assignedTo = ref<User[]>([]);

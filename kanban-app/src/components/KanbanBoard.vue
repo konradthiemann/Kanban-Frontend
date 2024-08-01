@@ -41,17 +41,29 @@
       <DetailDialog
         v-model="openDetailDialog"
         @close="openDetailDialog = false"
+        @edit="edit"
         :task="DetailDialogTaskData"
       />
-  </teleport>
+    </teleport>
+    <teleport to="body">
+      <TaskDialog
+        v-if="openEditTaskDialog"
+        v-model="openEditTaskDialog"
+        @update:task="updateEditedTask"
+        @close="openEditTaskDialog = false"
+        :task="editTaskData"
+        :edit="true"
+      />
+    </teleport>
   </template>
   
 <script lang="ts" setup>
 import { PropType, computed, ref } from 'vue'
 import type { Task } from '../types'
 import { Urgency } from '../types'
-import { updateField } from '../services/api'
+import { updateField, updateTask } from '../services/api'
 import DetailDialog from './DetailDialog.vue'
+import TaskDialog from './TaskDialog.vue'
   
 const props = defineProps({
   tasks: {
@@ -67,6 +79,12 @@ const props = defineProps({
 const statuses = ['todo', 'in_progress', 'review', 'done']
 const openDetailDialog = ref(false)
 const DetailDialogTaskData = ref<Task>({} as Task)
+const openEditTaskDialog = ref(false)
+const editTaskData = ref<Task>({} as Task)
+
+const emit = defineEmits<{
+  (e: 'update:Task'): void
+}>()
 
 const startDrag = (event: DragEvent, task:Task) => {
   if (!event || event.dataTransfer === null){
@@ -96,8 +114,20 @@ const sortedTasksByStatus = computed(() => props.tasks?.sort((a, b) => {
 
 const showDetailDialog = (task: Task) => {
   DetailDialogTaskData.value = task
-  console.log("DetailDialogTaskData: ", DetailDialogTaskData)
   openDetailDialog.value = true
+}
+
+const edit = (task: Task) => {
+  openDetailDialog.value = false
+  editTaskData.value = task
+  openEditTaskDialog.value = true
+  emit('update:Task')
+}
+
+const updateEditedTask = async (task:Task) => {
+  await updateTask(task)
+  emit('update:Task')
+  openEditTaskDialog.value = false
 }
 </script>
   

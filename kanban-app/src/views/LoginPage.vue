@@ -22,9 +22,10 @@
   
   const handleSubmit = async () => {
     try {
-      const loginSuccess =  await login(username.value, password.value);
-      if (loginSuccess) {
-        router.push('/main');
+      const userData =  await login(username.value, password.value);
+      console.log('userData from LoginPage:', userData);
+      if (userData) {
+        router.push({ name: 'main', params: { user: JSON.stringify(userData) }});
       }
     } catch (error) {
       console.error(error);

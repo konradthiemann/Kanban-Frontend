@@ -5,7 +5,7 @@ export enum Urgency {
 }
 export interface Task {
     id: number;
-    assigned_to: string[];
+    assigned_to: number[];
     author: {
       id: number,
       first_name: string,
@@ -27,6 +27,11 @@ export interface Task {
     name: string;
   }
 
+  export interface TaskDialogProps {
+    task?: Task;
+    dialog?: boolean;
+    edit?: boolean;
+  }
   export interface DecodedToken {
     exp: number; // expiration time
     iat: number; // issued at
@@ -41,4 +46,12 @@ export interface Task {
     last_name: string;
     username: string;
     email: string;
+  }
+
+  export interface UserData {
+    first_name: string;
+    last_name: string;
+    username: string;
+    email: string;
+    password: string;
   }

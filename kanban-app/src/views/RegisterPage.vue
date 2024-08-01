@@ -1,7 +1,10 @@
 <template>
     <div>
       <h1>Register</h1>
-      <form @submit.prevent="handleSubmit">
+      <form 
+        @submit.prevent="handleSubmit"
+        class="register-form"
+        >
         <input v-model="username" placeholder="Username" />
         <input v-model="firstName" placeholder="First Name" />
         <input v-model="lastName" placeholder="Last Name" />
@@ -26,8 +29,24 @@
   const password = ref('');
   
   const handleSubmit = async () => {
-    await register({ username: username.value, first_name: firstName.value, last_name: lastName.value, email: email.value, password: password.value });
+    const response = await register({ 
+      username: username.value,
+      first_name: firstName.value,
+      last_name: lastName.value,
+      email: email.value,
+      password: password.value
+    });
+    console.log(response);
+    if (!response) return; 
     router.push('/');
   };
   </script>
   
+  <style scoped>
+  .register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  </style>
+  ```

@@ -1,12 +1,14 @@
 <template>
-    <v-app>
+  <v-app>
     <v-main>
       <v-container>
         <v-row>
           <v-col cols="12">
             <v-card class="pa-4">
               <v-toolbar flat>
-                <v-toolbar-title>Main Page</v-toolbar-title>
+                <v-toolbar-title>
+                  Hello, {{ user.first_name }} {{ user.last_name }}
+                </v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-btn
                   color="primary"
@@ -49,6 +51,7 @@
               <KanbanBoard
                 :tasks="taskByCategory"
                 v-model="selectedCategories"
+                @update:Task="updateTasks"
               />
               <Teleport to="body">
                 <TaskDialog
@@ -67,11 +70,14 @@
   
 <script lang="ts" setup>
 import { ref, onBeforeMount, computed } from 'vue';
+import { useRoute } from 'vue-router';
 import KanbanBoard from '../components/KanbanBoard.vue';
 import TaskDialog from '../components/TaskDialog.vue';
 import { fetchTasks, searchTasks ,fetchCategories } from '../services/api';
 import { Category, Task } from '../types';
-  
+
+const route = useRoute();
+const user = computed(()=> JSON.parse(route.params.user as string));
 const searchQuery = ref('');
 const selectedCategories = ref<Category[]>([]);
 const tasks = ref<Task[]>([]);
@@ -114,6 +120,10 @@ const toggleAllCategories = () => {
 </script>
 
 <style scoped>
+  ::v-deep .v-application--wrap {
+    min-height: 50dvh;
+  }
+
   .v-card {
     max-width: 800px;
     margin: auto;

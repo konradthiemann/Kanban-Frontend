@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import api, { getUserID, getUser } from '../services/api';
+import { UserData } from '../types';
 
 export function useAuth() {
   const user = ref();
@@ -18,7 +19,7 @@ export function useAuth() {
       const userId = await getUserID(response.data.access);
       user.value = await getUser(userId);
       
-      return true
+      return user.value
     } catch (error:any) {
       if (error.response && error.response.status === 401) {
         console.log('Invalid username or password');
@@ -29,14 +30,54 @@ export function useAuth() {
     }
   };
 
-  const register = async (userData: any) => {
+  const register = async (userData: UserData) => {
     try {
-      const response = await api.post('/auth/register/', userData);
+      const response = await api.post('/register/', userData);
+      console.log('User registered:', response.data);
       return response.data;
     } catch (error) {
       console.error(error);
     }
   };
+
+  //This function attempts to refresh the access token using the refresh token stored in localStorage
+  const refreshToken = async () => {
+    try {
+      const refresh = localStorage.getItem('refresh');
+      if (!refresh) throw new Error('No refresh token available');
+
+      const response = await api.post('/api/token/refresh/', { refresh });
+      localStorage.setItem('access', response.data.access);
+      api.defaults.headers['Authorization'] = `Bearer ${response.data.access}`;
+      return true;
+    } catch (error: any) {
+      console.error('Failed to refresh token:', error);
+      return false;
+    }
+  };
+
+  //This function handles 401 errors by attempting to refresh the token and retrying the original request if the token refresh is successful. If the token refresh fails, it redirects the user to the login page.
+  const handle401Error = async (error: any) => {
+    if (error.response && error.response.status === 401) {
+      const refreshed = await refreshToken();
+      if (refreshed) {
+        // Retry the original request
+        error.config.headers['Authorization'] = `Bearer ${localStorage.getItem('access')}`;
+        return api.request(error.config);
+      } else {
+        // Redirect to login page or handle as needed
+        console.log('Redirecting to login page');
+        // router.push('/login'); // Uncomment if using Vue Router
+      }
+    }
+    return Promise.reject(error);
+  };
+
+  // An Axios response interceptor is added to handle 401 errors globally. This ensures that any request that receives a 401 error will trigger the handle401Error function.
+  api.interceptors.response.use(
+    response => response,
+    handle401Error
+  );
 
   return { user, login, register };
 }
