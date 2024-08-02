@@ -55,6 +55,7 @@
               />
               <Teleport to="body">
                 <TaskDialog
+                  v-if="showCreateTaskDialog"
                   v-model="showCreateTaskDialog"
                   @close="showCreateTaskDialog = false"
                   @save="updateTasks"
@@ -69,59 +70,68 @@
 </template>
   
 <script lang="ts" setup>
-import { ref, onBeforeMount, computed } from 'vue';
-import { useRoute } from 'vue-router';
-import KanbanBoard from '../components/KanbanBoard.vue';
-import TaskDialog from '../components/TaskDialog.vue';
-import { fetchTasks, searchTasks ,fetchCategories } from '../services/api';
-import { Category, Task } from '../types';
+import { ref, onBeforeMount, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import KanbanBoard from '../components/KanbanBoard.vue'
+import TaskDialog from '../components/TaskDialog.vue'
+import { fetchTasks, searchTasks ,fetchCategories } from '../services/api'
+import { Category, Task } from '../types'
 
-const route = useRoute();
-const user = computed(()=> JSON.parse(route.params.user as string));
-const searchQuery = ref('');
-const selectedCategories = ref<Category[]>([]);
-const tasks = ref<Task[]>([]);
-const categories = ref<Category[]>([]);
-const showCreateTaskDialog = ref(false);
+const route = useRoute()
+const router = useRouter()
+const user = computed(()=> JSON.parse(route.params.user as string || '{}'))
+const searchQuery = ref('')
+const selectedCategories = ref<Category[]>([])
+const tasks = ref<Task[]>([])
+const categories = ref<Category[]>([])
+const showCreateTaskDialog = ref(false)
   
   
 onBeforeMount(async () => {
-  tasks.value = await fetchTasks();
-  categories.value = await fetchCategories();
-  selectedCategories.value = categories.value;
-});
+  try {
+    tasks.value = await fetchTasks()
+    categories.value = await fetchCategories()
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      router.push({ path: '/' })
+    } else {
+      console.error(error)
+    }
+  }
+  selectedCategories.value = categories.value
+})
 
 const updateTasks = async () => {
-  tasks.value = await fetchTasks();
-};
+  tasks.value = await fetchTasks()
+}
 
 const searchInTasks = async () => {
   if (!searchQuery.value) {
-    tasks.value = await fetchTasks();
-    return;
+    tasks.value = await fetchTasks()
+    return
   }
   tasks.value = await searchTasks(searchQuery.value)
-};
+}
 
 const taskByCategory = computed(() => {
   return tasks.value.filter((task) => 
     selectedCategories.value.find((category) => task.category === category.id)
-  );
-});
+  )
+})
 
 const toggleAllCategories = () => {
   if (selectedCategories.value.length === categories.value.length) {
-    selectedCategories.value = [];
+    selectedCategories.value = []
   } else {
-    selectedCategories.value = categories.value;
+    selectedCategories.value = categories.value
   }
-};
+}
 
 </script>
 
 <style scoped>
   ::v-deep .v-application--wrap {
-    min-height: 50dvh;
+    min-height: 50dvh
   }
 
   .v-card {
