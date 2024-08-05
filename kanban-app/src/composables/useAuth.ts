@@ -31,13 +31,8 @@ export function useAuth() {
   };
 
   const register = async (userData: UserData) => {
-    try {
       const response = await api.post('/register/', userData);
-      console.log('User registered:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error(error);
-    }
+      return response
   };
 
   //This function attempts to refresh the access token using the refresh token stored in localStorage

@@ -14,9 +14,7 @@
       </VCardTitle>
       <VCardText>
         <VForm 
-          style="
-            display: flex;
-            flex-direction: column;"
+          class="form"
           @submit.prevent="props.edit ? editTask() : handleSave()"
           validate-on="submit"
           >
@@ -258,6 +256,12 @@ watch(() => props.dialog, (newVal) => {
   font-size: 1.5em;
   font-weight: bold;
 }
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
 .mt-3 {
   margin-top: 1rem;
 }
