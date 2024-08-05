@@ -74,7 +74,7 @@ const props = defineProps({
     type: Array as PropType<{id:number, name:string}[]>,
     required: true,
   }, 
-});
+})
 
 const statuses = ['todo', 'in_progress', 'review', 'done']
 const openDetailDialog = ref(false)
@@ -90,22 +90,22 @@ const startDrag = (event: DragEvent, task:Task) => {
   if (!event || event.dataTransfer === null){
     return;
   }
-  event.dataTransfer.dropEffect = 'move';
-  event.dataTransfer.effectAllowed = 'move';
-  event.dataTransfer.setData('taskID', task.id.toString());
-};
+  event.dataTransfer.dropEffect = 'move'
+  event.dataTransfer.effectAllowed = 'move'
+  event.dataTransfer.setData('taskID', task.id.toString())
+}
 
 const onDrop = (event: DragEvent, status: string) => {
   if (!event || event.dataTransfer === null){
-    return;
+    return
   }
-  const taskID = event.dataTransfer.getData('taskID');
-  const task = props.tasks.find((task) => task.id == +taskID);
-  task ? task.status = status : 'todo';
+  const taskID = event.dataTransfer.getData('taskID')
+  const task = props.tasks.find((task) => task.id == +taskID)
+  task ? task.status = status : 'todo'
   if (task) {
-    updateField(+taskID, 'status', task?.status);
+    updateField(+taskID, 'status', task?.status)
   }
-};
+}
 
 const sortedTasksByStatus = computed(() => props.tasks?.sort((a, b) => {
     return Object.values(Urgency).indexOf(a.urgency) - Object.values(Urgency).indexOf(b.urgency)

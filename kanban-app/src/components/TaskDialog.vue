@@ -118,10 +118,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch } from 'vue';
-import api, { fetchCategories, getAllUsers } from '../services/api';
-import { Category, TaskDialogProps, User, Task, Urgency } from '../types';
-import { dateToUnixTimestamp } from '../services/mapping';
+import { ref, onMounted, watch } from 'vue'
+import api, { fetchCategories, getAllUsers } from '../services/api'
+import { Category, TaskDialogProps, User, Task, Urgency } from '../types'
+import { dateToUnixTimestamp } from '../services/mapping'
 
 const props = withDefaults(defineProps<TaskDialogProps>(), {
   task: undefined,
@@ -136,29 +136,29 @@ const emit = defineEmits<{
   (e: 'update:dialog') : void
 }>()
 
-const title = ref('');
-const description = ref('');
-const dueDate = ref();
-const urgency = ref<Urgency>('medium' as Urgency);
-const status = ref('todo');
+const title = ref('')
+const description = ref('')
+const dueDate = ref()
+const urgency = ref<Urgency>('medium' as Urgency)
+const status = ref('todo')
 const category = ref<Category | undefined>()
-const categories = ref<Category[]>([]);
-const urgencyOptions = ['low', 'medium', 'high'];
-const statusOptions = ['todo', 'in_progress', 'review', 'done'];
-const users = ref<User[]>(await getAllUsers());
-const assignedTo = ref<User[]>([]);
-const errorResponse = ref<any>();
+const categories = ref<Category[]>([])
+const urgencyOptions = ['low', 'medium', 'high']
+const statusOptions = ['todo', 'in_progress', 'review', 'done']
+const users = ref<User[]>(await getAllUsers())
+const assignedTo = ref<User[]>([])
+const errorResponse = ref<any>()
 
 const handleSave = async () => {
   try {
-    await api.post('/todos/', getNewTask());
-    emit('save');
-    emit('close');
+    await api.post('/todos/', getNewTask())
+    emit('save')
+    emit('close')
     clearForm()
   } catch (error:any) {
-    errorResponse.value = error.response.data;
+    errorResponse.value = error.response.data
   }
-};
+}
 
 const getNewTask = () => {
   return {
@@ -174,19 +174,19 @@ const getNewTask = () => {
 
 const editTask = async () => {
   try {
-    const task = getEditedTask();
-    if (!task) return;
+    const task = getEditedTask()
+    if (!task) return
     emit ('update:task', task)
-    emit('save');
-    emit('close');
+    emit('save')
+    emit('close')
     clearForm()
   } catch (error:any) {
-    errorResponse.value = error.response.data;
+    errorResponse.value = error.response.data
   }
-};
+}
 
 const getEditedTask = () => {
-  if (!props.task || !category.value?.id) return;
+  if (!props.task || !category.value?.id) return
     const task: Task =  {
       id: props.task?.id, 
       author: props.task?.author,
@@ -202,24 +202,24 @@ const getEditedTask = () => {
 }
 
 const updateDialog = () => {
-  emit('update:dialog');
+  emit('update:dialog')
 }
 
 const closeDialog = () => {
   updateDialog()
   emit('close')
   clearForm()
-};
+}
 
 const clearForm = () => {
-  title.value = '';
-  description.value = '';
-  dueDate.value = '';
-  urgency.value = 'medium' as Urgency;
-  status.value = 'todo';
-  category.value = undefined;
-  assignedTo.value = [];
-  errorResponse.value = {};
+  title.value = ''
+  description.value = ''
+  dueDate.value = ''
+  urgency.value = 'medium' as Urgency
+  status.value = 'todo'
+  category.value = undefined
+  assignedTo.value = []
+  errorResponse.value = {}
 }
 
 onMounted(async () => {
@@ -229,26 +229,26 @@ onMounted(async () => {
 
 const populateForm = () => {
   if (props.task) {
-    title.value = props.task.title;
-    description.value = props.task.description;
-    dueDate.value = new Date(props.task.due_date).toISOString().split('T')[0];
-    urgency.value = props.task.urgency;
-    status.value = props.task.status;
-    category.value = categories.value.find((category) => category.id === props.task?.category);
-    assignedTo.value = users.value.filter((user) => props.task?.assigned_to.includes(user.id));
+    title.value = props.task.title
+    description.value = props.task.description
+    dueDate.value = new Date(props.task.due_date).toISOString().split('T')[0]
+    urgency.value = props.task.urgency
+    status.value = props.task.status
+    category.value = categories.value.find((category) => category.id === props.task?.category)
+    assignedTo.value = users.value.filter((user) => props.task?.assigned_to.includes(user.id))
   }
 }
 
 watch(() => props.dialog, (newVal) => {
   if (!newVal) {
-    title.value = '';
-    description.value = '';
-    dueDate.value = '';
-    urgency.value = 'medium' as Urgency;
-    status.value = 'todo';
-    category.value = undefined;
+    title.value = ''
+    description.value = ''
+    dueDate.value = ''
+    urgency.value = 'medium' as Urgency
+    status.value = 'todo'
+    category.value = undefined
   }
-});
+})
 </script>
 
 <style scoped>

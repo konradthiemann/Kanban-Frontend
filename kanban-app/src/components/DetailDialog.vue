@@ -38,9 +38,9 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, watch, ref } from 'vue';
-import { Task, User } from '../types';
-import { getUser } from '../services/api';
+import { defineProps, watch, ref } from 'vue'
+import { Task, User } from '../types'
+import { getUser } from '../services/api'
 
 const props = defineProps({
     task: {
@@ -55,28 +55,26 @@ const emit = defineEmits<{
 }>()
 
 const close = () => {
-    emit('close');
+    emit('close')
 }
 
 const edit = (task:Task) => {
-    emit('edit', task);
+    emit('edit', task)
 }
 
 const assignedTo = ref<User[]>([]);
 
 watch(() => props.task?.assigned_to, (newAssignedTo) => {
-    if (!newAssignedTo) {
-        return;
-    }
-    assignedTo.value = [];
+    if (!newAssignedTo) return
+    
+    assignedTo.value = []
     for (let i = 0; i < newAssignedTo.length; i++) {
-        const element = newAssignedTo[i];
+        const element = newAssignedTo[i]
         getUser(+element).then((res) => {
-            assignedTo.value.push(res);
-        });
+            assignedTo.value.push(res)
+        })
     }
-});
-
+})
 
 </script>
 

@@ -66,20 +66,20 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 
 const router = useRouter()
 const { register } = useAuth()
 
-const username = ref('');
+const username = ref('')
 const first_name = ref('')
 const last_name = ref('')
-const email = ref('');
-const password = ref('');
-const confirm_password = ref('');
-const errorResponse = ref<any>();
+const email = ref('')
+const password = ref('')
+const confirm_password = ref('')
+const errorResponse = ref<any>()
 
 const handleRegister = async () => {
   try {
@@ -91,11 +91,9 @@ const handleRegister = async () => {
       password: password.value,
       confirm_password: confirm_password.value,
     });
-    console.log('response',response)
     if (!response) return
     router.push('/')
   } catch (error: any) {
-    console.log('i got an error',error)
     errorResponse.value = error.response.data;
 
   }

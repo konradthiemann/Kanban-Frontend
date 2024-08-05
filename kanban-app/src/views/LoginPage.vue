@@ -11,25 +11,24 @@
   </template>
   
   <script lang="ts" setup>
-  import { ref } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { useAuth } from '../composables/useAuth';
+  import { ref } from 'vue'
+  import { useRouter } from 'vue-router'
+  import { useAuth } from '../composables/useAuth'
   
-  const router = useRouter();
-  const { login } = useAuth();
-  const username = ref('');
-  const password = ref('');
+  const router = useRouter()
+  const { login } = useAuth()
+  const username = ref('')
+  const password = ref('')
   
   const handleSubmit = async () => {
     try {
-      const userData =  await login(username.value, password.value);
-      console.log('userData from LoginPage:', userData);
+      const userData =  await login(username.value, password.value)
       if (userData) {
-        router.push({ name: 'main', params: { user: JSON.stringify(userData) }});
+        router.push({ name: 'main', params: { user: JSON.stringify(userData) }})
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
-  };
+  }
   </script>
   

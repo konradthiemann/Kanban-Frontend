@@ -11,15 +11,15 @@ export const mapResponseToTask = (response: Task): Task => {
     title: response.title,
     description: response.description,
     category: response.category,
-  };
-};
+  }
+}
 
 export const mapResponseToCategory = (response: Category): Category => {
   return {
     id: response.id,
     name: response.name,
-  };
-};
+  }
+}
 
 export const dateToUnixTimestamp = (dateString: string): number => {
   if (!dateString) return 0
