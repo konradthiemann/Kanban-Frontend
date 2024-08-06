@@ -94,6 +94,7 @@ const handleRegister = async () => {
     if (!response) return
     router.push('/')
   } catch (error: any) {
+    console.log(error)
     errorResponse.value = error.response.data;
 
   }

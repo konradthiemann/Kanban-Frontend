@@ -31,7 +31,10 @@ export function useAuth() {
   };
 
   const register = async (userData: UserData) => {
-      const response = await api.post('/register/', userData)
+      const response = await api.post(
+        '/register/',
+        userData,
+    )
       return response
   };
 
@@ -53,7 +56,13 @@ export function useAuth() {
 
   //This function handles 401 errors by attempting to refresh the token and retrying the original request if the token refresh is successful. If the token refresh fails, it redirects the user to the login page.
   const handle401Error = async (error: any) => {
-    if (error.response && error.response.status === 401) {
+    if (
+      error.response
+      && error.response.status === 401
+      && error.response.data.detail !== 'No active account found with the given credentials'
+      && error.response.data.detail !== 'Token is invalid or expired'
+    ) {
+      console.log('handle401Error',error)
       const refreshed = await refreshToken()
       if (refreshed) {
         error.config.headers['Authorization'] = `Bearer ${localStorage.getItem('access')}`
@@ -70,6 +79,15 @@ export function useAuth() {
     response => response,
     handle401Error
   );
+
+  api.interceptors.request.use((request) => {
+    if (request.url === '/register/') {
+      delete request.headers['Authorization'];
+    }
+    return request;
+  }, (error) => {
+    return Promise.reject(error);
+  });
 
   return { user, login, register }
 }
