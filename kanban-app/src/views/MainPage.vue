@@ -103,6 +103,7 @@ onBeforeMount(async () => {
 
 const updateTasks = async () => {
   tasks.value = await fetchTasks()
+  fetchCategories()
 }
 
 const searchInTasks = async () => {

@@ -75,7 +75,12 @@ export const fetchCategories = async ():Promise<Category[]>  => {
 }
 
 export const addCategory = async (name:string):Promise<void> => {
-  api.post('/categories/', {"name":name})
+  const response = api.post('/categories/', {"name":name})
+  console.log(response)
+}
+
+export const deleteCategory = async (id:number):Promise<void> => {
+  api.delete(`/categories/${id}/`)
 }
 
 export default api

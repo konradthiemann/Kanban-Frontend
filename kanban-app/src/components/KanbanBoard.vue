@@ -28,8 +28,7 @@
                   @dragstart="startDrag($event, element)"
                   @click="showDetailDialog(element)"
                 >
-                  {{ element.category }}
-                  <!-- <div>{{ element.urgency }}</div> -->
+                  <div>{{ element.urgency }}</div>
                 </v-list-item>
               </template>
             </v-list>

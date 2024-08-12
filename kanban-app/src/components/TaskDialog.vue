@@ -70,6 +70,7 @@
             outlined
             class="mt-4"
           ></VSelect>
+          
           <VSelect
             v-model="category"
             :items="categories"
@@ -81,8 +82,28 @@
             :error="!!errorResponse?.category"
             :error-messages="errorResponse?.category?.[0]"
             outlined
+            @click="fetchCategories"
             class="mt-4"
-          ></VSelect>
+          >
+          <template v-slot:prepend-item>
+            <VTextField
+                  v-model="newCategoryName"
+                  label="add new category"
+                  outlined
+                  class="mt-4"
+                >
+                <template v-slot:append-inner>
+                  <VBtn
+                    color="primary"
+                    @click="createCategory()"
+                  >
+                  add
+                  </VBtn>
+                </template>  
+              </VTextField>   
+          </template>
+          
+          </VSelect>
           <VBtn
             v-if="props.edit" 
             type="submit"
@@ -119,7 +140,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue'
-import api, { fetchCategories, getAllUsers } from '../services/api'
+import api, { fetchCategories, getAllUsers, addCategory } from '../services/api'
 import { Category, TaskDialogProps, User, Task, Urgency } from '../types'
 import { dateToUnixTimestamp } from '../services/mapping'
 
@@ -148,6 +169,7 @@ const statusOptions = ['todo', 'in_progress', 'review', 'done']
 const users = ref<User[]>(await getAllUsers())
 const assignedTo = ref<User[]>([])
 const errorResponse = ref<any>()
+const newCategoryName = ref('')
 
 const handleSave = async () => {
   try {
@@ -237,6 +259,17 @@ const populateForm = () => {
     category.value = categories.value.find((category) => category.id === props.task?.category)
     assignedTo.value = users.value.filter((user) => props.task?.assigned_to.includes(user.id))
   }
+}
+
+const createCategory = async () => {
+  if (!newCategoryName.value) return
+  await addCategory(newCategoryName.value)
+  setTimeout(async () => {
+    console.log(await fetchCategories())
+    categories.value = await fetchCategories()
+    // category.value = categories.value.find((category) => category.name === newCategoryName.value)
+    // newCategoryName.value = ''
+  }, 100);
 }
 
 watch(() => props.dialog, (newVal) => {
