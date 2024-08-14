@@ -265,10 +265,7 @@ const createCategory = async () => {
   if (!newCategoryName.value) return
   await addCategory(newCategoryName.value)
   setTimeout(async () => {
-    console.log(await fetchCategories())
     categories.value = await fetchCategories()
-    // category.value = categories.value.find((category) => category.name === newCategoryName.value)
-    // newCategoryName.value = ''
   }, 100);
 }
 

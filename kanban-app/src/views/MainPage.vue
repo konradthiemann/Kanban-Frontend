@@ -89,8 +89,8 @@ const showCreateTaskDialog = ref(false)
   
 onBeforeMount(async () => {
   try {
-    tasks.value = await fetchTasks()
     categories.value = await fetchCategories()
+    tasks.value = await fetchTasks()
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
       router.push({ path: '/' })
@@ -102,8 +102,9 @@ onBeforeMount(async () => {
 })
 
 const updateTasks = async () => {
+  categories.value = await fetchCategories()
   tasks.value = await fetchTasks()
-  fetchCategories()
+  toggleAllCategories()
 }
 
 const searchInTasks = async () => {
